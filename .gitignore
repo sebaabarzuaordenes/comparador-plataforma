@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+Pods/
+
+# Android / Gradle
+.gradle/
+.kotlin/
+.cxx/
+build/
+**/build/
+*.apk
+*.aab
+
+# .NET / MAUI
+bin/
+obj/
+**/bin/
+**/obj/
+
+# iOS / Xcode
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+xcuserdata/
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# OS files
+.DS_Store

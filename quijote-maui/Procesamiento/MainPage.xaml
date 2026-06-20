@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Procesamiento.MainPage"
+             BackgroundColor="#1a1a2e">
+
+    <Grid>
+        <ScrollView x:Name="MainScroll">
+            <VerticalStackLayout Padding="20" Spacing="16">
+
+                <!-- Header -->
+                <Label Text="🔍" FontSize="48" HorizontalOptions="Center" Margin="0,30,0,0"/>
+                <Label Text="Procesamiento" FontSize="28" FontAttributes="Bold"
+                       TextColor="White" HorizontalOptions="Center"/>
+                <Label Text="Don Quijote de la Mancha" FontSize="14"
+                       TextColor="#a8dadc" HorizontalOptions="Center"/>
+
+                <!-- Botón procesar -->
+                <Button x:Name="ProcessBtn"
+                        Text="▶  Procesar Texto"
+                        Clicked="OnProcessClicked"
+                        BackgroundColor="#e94560"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        CornerRadius="14"
+                        HeightRequest="54"
+                        Margin="0,8,0,0"/>
+
+                <ActivityIndicator x:Name="Spinner" IsVisible="False" IsRunning="False"
+                                   Color="#e94560"/>
+                <Label x:Name="ProcessingLabel" Text="Analizando texto..." IsVisible="False"
+                       TextColor="#a8dadc" HorizontalOptions="Center" FontSize="13"/>
+
+                <!-- Resultado: tiempo -->
+                <Border x:Name="TimeBox" IsVisible="False"
+                        BackgroundColor="#14203b" StrokeShape="RoundRectangle 12"
+                        Stroke="#ffffff20" Padding="14">
+                    <HorizontalStackLayout>
+                        <Label Text="⏱ Tiempo de procesamiento: " TextColor="White" FontSize="13" VerticalOptions="Center"/>
+                        <Label x:Name="TimeLabel" TextColor="#a8dadc" FontAttributes="Bold" FontSize="14" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- Stats Grid -->
+                <Grid x:Name="StatsGrid" IsVisible="False" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                    <Border Grid.Row="0" Grid.Column="0" BackgroundColor="#14203b" StrokeShape="RoundRectangle 14" Padding="16">
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="📝" FontSize="24" HorizontalOptions="Center"/>
+                            <Label x:Name="WordCountLabel" FontSize="20" FontAttributes="Bold" TextColor="#e94560" HorizontalOptions="Center"/>
+                            <Label Text="Palabras" FontSize="11" TextColor="#ffffff99" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="0" Grid.Column="1" BackgroundColor="#14203b" StrokeShape="RoundRectangle 14" Padding="16">
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="📖" FontSize="24" HorizontalOptions="Center"/>
+                            <Label x:Name="SentenceCountLabel" FontSize="20" FontAttributes="Bold" TextColor="#06d6a0" HorizontalOptions="Center"/>
+                            <Label Text="Oraciones" FontSize="11" TextColor="#ffffff99" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="0" BackgroundColor="#14203b" StrokeShape="RoundRectangle 14" Padding="16">
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="📄" FontSize="24" HorizontalOptions="Center"/>
+                            <Label x:Name="ParaCountLabel" FontSize="20" FontAttributes="Bold" TextColor="#ffd166" HorizontalOptions="Center"/>
+                            <Label Text="Párrafos" FontSize="11" TextColor="#ffffff99" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" BackgroundColor="#14203b" StrokeShape="RoundRectangle 14" Padding="16">
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="🔤" FontSize="24" HorizontalOptions="Center"/>
+                            <Label x:Name="UniqueCountLabel" FontSize="20" FontAttributes="Bold" TextColor="#a8dadc" HorizontalOptions="Center"/>
+                            <Label Text="Únicas" FontSize="11" TextColor="#ffffff99" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Top 10 gráfico -->
+                <Border x:Name="ChartBox" IsVisible="False" BackgroundColor="#14203b"
+                        StrokeShape="RoundRectangle 16" Padding="16">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Top 10 Palabras Más Frecuentes" TextColor="White"
+                               FontAttributes="Bold" FontSize="14"/>
+                        <VerticalStackLayout x:Name="ChartStack" Spacing="6"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Botón modal -->
+                <Border x:Name="ModalBtnBox" IsVisible="False"
+                        BackgroundColor="Transparent"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="#a8dadc88"
+                        Margin="0,0,0,30">
+                    <Button x:Name="ShowModalBtn"
+                            Text="📋  Ver Todas las Palabras"
+                            Clicked="OnShowModalClicked"
+                            BackgroundColor="Transparent"
+                            TextColor="#a8dadc"
+                            FontAttributes="Bold"
+                            HeightRequest="50"/>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Modal overlay -->
+        <Grid x:Name="ModalOverlay" IsVisible="False" BackgroundColor="#1a1a2e">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Modal header -->
+            <Grid Grid.Row="0" BackgroundColor="#0f3460" Padding="16,50,16,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Text="Frecuencia de Palabras"
+                       TextColor="White" FontAttributes="Bold" FontSize="18" VerticalOptions="Center"/>
+                <Button Grid.Column="1" Text="✕" TextColor="#e94560"
+                        BackgroundColor="Transparent" Clicked="OnCloseModalClicked"
+                        FontSize="20" Padding="0"/>
+            </Grid>
+
+            <!-- Búsqueda -->
+            <Border Grid.Row="1" BackgroundColor="#ffffff18" StrokeShape="RoundRectangle 10"
+                    Margin="12" Padding="4">
+                <SearchBar x:Name="SearchBar" Placeholder="Buscar palabra..."
+                           PlaceholderColor="#ffffff55" TextColor="White"
+                           BackgroundColor="Transparent"
+                           TextChanged="OnSearchChanged"/>
+            </Border>
+
+            <!-- Header lista -->
+            <Grid Grid.Row="2" Padding="12,4" ColumnDefinitions="36,*,60,80">
+                <Label Grid.Column="0" Text="#" TextColor="#a8dadc" FontSize="11" FontAttributes="Bold"/>
+                <Label Grid.Column="1" Text="Palabra" TextColor="#a8dadc" FontSize="11" FontAttributes="Bold"/>
+                <Label Grid.Column="2" Text="Veces" TextColor="#a8dadc" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                <Label Grid.Column="3" Text="Barra" TextColor="#a8dadc" FontSize="11" FontAttributes="Bold"/>
+            </Grid>
+
+            <!-- Lista scrollable -->
+            <CollectionView x:Name="WordList" Grid.Row="3">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12,6" ColumnDefinitions="36,*,60,80">
+                            <Label Grid.Column="0" Text="{Binding Index}" TextColor="#e94560" FontSize="11"/>
+                            <Label Grid.Column="1" Text="{Binding Word}" TextColor="White" FontSize="13"/>
+                            <Label Grid.Column="2" Text="{Binding Count}" TextColor="#ffd166"
+                                   FontSize="12" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                            <Border Grid.Column="3" BackgroundColor="#ffffff18"
+                                    StrokeShape="RoundRectangle 5" HeightRequest="10" VerticalOptions="Center">
+                                <BoxView Color="#e94560BB"
+                                         HorizontalOptions="Start"
+                                         WidthRequest="{Binding BarWidth}"/>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
+</ContentPage>
